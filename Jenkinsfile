@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        nodejs 'Node20' // This must match the name you set in Step 2
+        nodejs 'Node25' // This must match the name you set in Step 2
     }
     stages {
         stage('Install Dependencies') {
