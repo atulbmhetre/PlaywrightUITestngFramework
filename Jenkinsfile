@@ -1,40 +1,39 @@
 pipeline {
     agent any
     tools {
-        nodejs 'Node25' // Match the name exactly as it appears in your log
-        maven 'M3'
+        // Match the exact names you gave in Jenkins Global Tool Configuration
+        nodejs 'Node25' 
+        maven 'M3' 
     }
     stages {
-        stage('Install Dependencies') {
+        stage('Compile and Install') {
             steps {
-                // Use 'bat' for Windows instead of 'sh'
-                bat 'npm install'
-                bat 'npx playwright install --with-deps'
+                // Java projects use Maven to install dependencies, not npm
+                bat 'mvn clean install -DskipTests'
             }
         }
-        stage('Run Tests') {
+        stage('Run Playwright Tests') {
             steps {
-                // If using TestNG with Maven:
-                bat 'mvn test' 
-                
-                // OR if you are running playwright directly:
-                // bat 'npx playwright test'
+                // This command runs your TestNG tests
+                bat 'mvn test'
             }
         }
     }
     post {
         always {
-            // This publishes your TestNG results
+            // Publishes the TestNG results chart in Jenkins
             testNG(reportFilenamePattern: '**/testng-results.xml')
             
-            // This publishes the Playwright HTML report
+            // Note: Playwright Java doesn't generate a "playwright-report" folder by default 
+            // unless you've specifically configured a custom reporter in your code.
+            // If you don't have this folder, you can remove or comment out this block.
+            /*
             publishHTML(target: [
-                reportDir: 'playwright-report',
+                reportDir: 'target/playwright-report', 
                 reportFiles: 'index.html',
-                reportName: 'Playwright Report',
-                alwaysLinkToLastBuild: true,
-                keepAll: true
+                reportName: 'Playwright Report'
             ])
+            */
         }
     }
 }
