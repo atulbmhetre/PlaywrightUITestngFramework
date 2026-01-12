@@ -21,19 +21,15 @@ pipeline {
     }
     post {
         always {
-            // Publishes the TestNG results chart in Jenkins
-            testNG(reportFilenamePattern: '**/testng-results.xml')
-            
-            // Note: Playwright Java doesn't generate a "playwright-report" folder by default 
-            // unless you've specifically configured a custom reporter in your code.
-            // If you don't have this folder, you can remove or comment out this block.
-            /*
-            publishHTML(target: [
-                reportDir: 'target/playwright-report', 
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'test-output/extent-reports',
                 reportFiles: 'index.html',
-                reportName: 'Playwright Report'
+                reportName: 'Playwright Extent Report'
             ])
-            */
         }
     }
+
 }
