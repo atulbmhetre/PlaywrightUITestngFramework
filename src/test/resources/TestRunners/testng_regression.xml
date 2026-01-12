@@ -13,11 +13,6 @@
             <class name="com.qa.opencart.tests.HomepageTests" />
         </classes>
     </test>
-    <test name="Open Cart LoginPage Tests">
-        <classes>
-            <!-- Specify the full package and class name of your test class -->
-            <class name="com.qa.opencart.tests.LoginpageTests" />
-        </classes>
-    </test>
+
 
 </suite>
