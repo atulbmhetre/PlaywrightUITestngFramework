@@ -6,18 +6,14 @@ pipeline {
         maven 'M3' 
     }
     stages {
-        stage('Compile and Install') {
-            steps {
-                // Java projects use Maven to install dependencies, not npm
-                bat 'mvn clean install -DskipTests'
+        stages {
+            stage('Run Playwright Tests') {
+                steps {
+                    bat 'mvn clean test'
+                }
             }
         }
-        stage('Run Playwright Tests') {
-            steps {
-                // This command runs your TestNG tests
-                bat 'mvn test'
-            }
-        }
+
     }
     post {
         always {
