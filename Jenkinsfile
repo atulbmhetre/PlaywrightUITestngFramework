@@ -6,14 +6,11 @@ pipeline {
         maven 'M3' 
     }
     stages {
-        stages {
-            stage('Run Playwright Tests') {
-                steps {
-                    bat 'mvn clean test'
-                }
+        stage('Run Playwright Tests') {
+            steps {
+                bat 'mvn clean test'
             }
         }
-
     }
     post {
         always {
