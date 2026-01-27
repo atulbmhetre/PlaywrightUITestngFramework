@@ -8,7 +8,17 @@ pipeline {
     stages {
         stage('Run Playwright Tests') {
             steps {
-                bat "mvn clean test -Denv=${params.env} -Dbrowser=${params.browser}"
+                    script {
+                        // Map the friendly name to the actual file path
+                        def suiteMap = [
+                            'Smoke': 'src/test/resources/testng_smoke.xml',
+                            'Regression': 'src/test/resources/testng_regression.xml'
+                            'crossbrowser': 'src/test/resources/testng_crossbrowser.xml'
+                        ]
+                        def selectedSuite = suiteMap[params.suiteFile]
+
+                        bat "mvn clean test -DsuiteFile=${selectedSuite} -Denv=${params.env} -Dbrowser=${params.browser}"
+                    }
             }
         }
     }

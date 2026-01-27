@@ -16,7 +16,6 @@ public class ConfigManager {
     private static void loadProperties() {
 
         String env = System.getProperty("env", "dev");
-        System.out.println("Environment from Config Manager class: " + env);
 
         String path = System.getProperty("user.dir")
                 + "/src/test/resources/config/"

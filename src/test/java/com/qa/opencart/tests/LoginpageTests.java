@@ -12,7 +12,7 @@ public class LoginpageTests extends BaseClass {
 
     LoginPage loginPage;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void navigateToLoginPage(){
         loginPage = homepage.navigateToLoginPage();
     }
