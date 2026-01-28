@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <suiteFile>src/test/resources/testng_regression.xml</suiteFile>
+    <suiteFile>testng_regression</suiteFile>
   </properties>
 
   <build>
@@ -46,7 +46,7 @@
 
           <!-- Use TestNG XML -->
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/TestRunners/testng_${suiteFile}.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/resources/TestRunners/${suiteFile}.xml</suiteXmlFile>
           </suiteXmlFiles>
 
           <!-- Enable default TestNG reports -->

@@ -8,16 +8,21 @@ pipeline {
     stages {
         stage('Run Playwright Tests') {
             steps {
-                    script {
-                        def suiteMap = [
-                            'smoke'        : 'testng_smoke',        // No path, no .xml
-                            'regression'   : 'testng_regression',
-                            'crossbrowser' : 'testng_crossbrowser'
-                        ]
-                        def selectedFile = suiteMap[params.testSuite]
-
-                        bat "mvn clean test -DsuiteFile=${selectedFile} -Denv=${params.env}"
-                    }
+                script {
+                    // 1. Exact map of Jenkins choice to Filename (no path, no .xml)
+                    def suiteMap = [
+                           'smoke'        : 'testng_smoke',
+                           'regression'   : 'testng_regression',
+                           'crossbrowser' : 'testng_crossbrowser'
+                          ]suiteFi
+                    // 2. Lookup using 'params.testSuite' (Must match UI Name)
+                    def selected = suiteMap[params.testSuite.toLowerCase()]
+                    if (selected == null) {
+                           error "Selected suite '${params.testSuite}' not found in mapping!"
+                         }
+                    // 3. Handover to Maven using -DsuiteFile (Must match POM property)
+                    bat "mvn clean test -DsuiteFile=${selected} -Denv=${params.env}"
+                }
             }
         }
     }

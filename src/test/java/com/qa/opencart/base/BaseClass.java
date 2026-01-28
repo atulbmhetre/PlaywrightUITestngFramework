@@ -23,13 +23,14 @@ public class BaseClass {
     @BeforeClass(alwaysRun = true)
     public void setUp(@Optional String browserFromXML) throws IOException {
         pf = new PlaywrightFactory();
-        String browserName = System.getProperty("browser");
-        if(browserName == null || browserName.isEmpty() || browserName.isBlank()){
-            if(browserFromXML !=null && !browserFromXML.isEmpty() && !browserFromXML.isBlank())
-                browserName = browserFromXML;
-            else
-                browserName = ConfigManager.get("browser");
-        }
+        String browserName = null;
+        if(browserFromXML != null || !browserFromXML.isEmpty() || !browserFromXML.isBlank())
+            browserName = browserFromXML;
+        else if (System.getProperty("browser") !=null || !System.getProperty("browser").isEmpty())
+            browserName = System.getProperty("browser");
+        else
+            browserName = "chromium";
+
         tlBrowserName.set(browserName);
         page = pf.intiBrowser(browserName);
         homepage = new Homepage(page);
