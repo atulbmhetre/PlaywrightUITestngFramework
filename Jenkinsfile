@@ -11,17 +11,32 @@ pipeline {
                 script {
                     // 1. Exact map of Jenkins choice to Filename (no path, no .xml)
                     def suiteMap = [
-                           'smoke'        : 'testng_smoke',
-                           'regression'   : 'testng_regression',
-                           'crossbrowser' : 'testng_crossbrowser'
-                          ]suiteFi
+                        'smoke'        : 'testng_smoke',
+                        'regression'   : 'testng_regression',
+                        'crossbrowser' : 'testng_crossbrowser'
+                    ]
+
                     // 2. Lookup using 'params.testSuite' (Must match UI Name)
-                    def selected = suiteMap[params.testSuite.toLowerCase()]
+                    def testSuiteLower = params.testSuite.toLowerCase()
+                    def selected = suiteMap[testSuiteLower]
+
                     if (selected == null) {
-                           error "Selected suite '${params.testSuite}' not found in mapping!"
-                         }
-                    // 3. Handover to Maven using -DsuiteFile (Must match POM property)
-                    bat "mvn clean test -DsuiteFile=${selected} -Denv=${params.env}"
+                        error "Selected suite '${params.testSuite}' not found in mapping!"
+                    }
+
+                    // 3. Logic: Only pass the -Dbrowser flag if NOT running crossbrowser
+                    // and if the user didn't select 'All'
+                    def browserFlag = ""
+                    if (testSuiteLower != 'crossbrowser') {
+                        if (params.browser != 'All') {
+                            browserFlag = "-Dbrowser=${params.browser}"
+                        }
+                    } else {
+                        echo "Cross-browser suite detected: Ignoring browser parameter to allow XML control."
+                    }
+
+                    // 4. Handover to Maven
+                    bat "mvn clean test -DsuiteFile=${selected} -Denv=${params.env} ${browserFlag}"
                 }
             }
         }
