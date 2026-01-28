@@ -13,13 +13,8 @@ import java.util.Properties;
 
 public class PlaywrightFactory {
 
-//    Playwright playwright;
-    BrowserType browserType;
-//    Browser browser;
-//    BrowserContext browserContext;
-//    Page page;
-
     private static ThreadLocal<Playwright> tlPlaywright = new ThreadLocal<>();
+    private static ThreadLocal<BrowserType> tlBrowserType = new ThreadLocal<>();
     private static ThreadLocal<Browser> tlBrowser = new ThreadLocal<>();
     private static ThreadLocal<BrowserContext> tlBrowserContext = new ThreadLocal<>();
     private static ThreadLocal<Page> tlPage = new ThreadLocal<>();
@@ -42,29 +37,27 @@ public class PlaywrightFactory {
 
 
     public Page intiBrowser(String browserName){
-        //playwright = Playwright.create();
         tlPlaywright.set(Playwright.create());
-        switch (browserName.toLowerCase()){
+
+        String name = browserName.toLowerCase().trim();
+        switch (name) {
+            case "chrome":     // Added this
             case "chromium":
-                //browserType = playwright.chromium();
-                browserType = tlPlaywright.get().chromium();
+                tlBrowserType.set(tlPlaywright.get().chromium());
                 break;
             case "firefox":
-                //browserType = playwright.firefox();
-                browserType = tlPlaywright.get().firefox();
+                tlBrowserType.set(tlPlaywright.get().firefox());
                 break;
             case "safari":
-                //browserType = playwright.webkit();
-                browserType = tlPlaywright.get().webkit();
+            case "webkit":     // Added this for completeness
+                tlBrowserType.set(tlPlaywright.get().webkit());
                 break;
+            default:
+                throw new IllegalArgumentException("Browser type not supported: " + name);
         }
-//        browser = browserType.launch(new BrowserType.LaunchOptions().setHeadless(Boolean.parseBoolean(prop.getProperty("isHeadless"))));
-//        browserContext = browser.newContext();
-//        page = browserContext.newPage();
-        tlBrowser.set(browserType.launch(new BrowserType.LaunchOptions().setHeadless(Boolean.parseBoolean(ConfigManager.get("isHeadless")))));
+        tlBrowser.set(tlBrowserType.get().launch(new BrowserType.LaunchOptions().setHeadless(Boolean.parseBoolean(ConfigManager.get("isHeadless")))));
         tlBrowserContext.set(tlBrowser.get().newContext());
         tlPage.set(tlBrowserContext.get().newPage());
-//        page.navigate(prop.getProperty("url"));
         tlPage.get().navigate(ConfigManager.get("url"));
 
         return getPage();

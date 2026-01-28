@@ -29,6 +29,7 @@ public class ConfigManager {
         }
 
         try (FileInputStream fis = new FileInputStream(file)) {
+            System.out.println("Config to Load : " + file.getPath());
             prop = new Properties();
             prop.load(fis);
         } catch (IOException e) {
@@ -38,7 +39,8 @@ public class ConfigManager {
     }
 
     public static String get(String key) {
-        return prop.getProperty(key);
+        String value = prop.getProperty(key);
+        return (value != null) ? value.trim() : null;
     }
 }
 

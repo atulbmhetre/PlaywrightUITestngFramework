@@ -8,7 +8,6 @@
 
     <!-- A test block can contain one or more classes -->
     <test name="Open Cart Smoke Tests">
-        <parameter name="browser" value="chromium"/>
         <groups>
             <run>
                 <include name="smoke" />

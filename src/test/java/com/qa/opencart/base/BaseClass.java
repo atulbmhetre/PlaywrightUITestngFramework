@@ -24,12 +24,17 @@ public class BaseClass {
     public void setUp(@Optional String browserFromXML) throws IOException {
         pf = new PlaywrightFactory();
         String browserName = null;
-        if(browserFromXML != null || !browserFromXML.isEmpty() || !browserFromXML.isBlank())
+        if (browserFromXML != null && !browserFromXML.isBlank()) {
             browserName = browserFromXML;
-        else if (System.getProperty("browser") !=null || !System.getProperty("browser").isEmpty())
+        }
+        else if (System.getProperty("browser") != null && !System.getProperty("browser").isBlank()) {
             browserName = System.getProperty("browser");
-        else
-            browserName = "chromium";
+        }
+        else {
+            browserName = ConfigManager.get("browser");
+        }
+
+        System.out.println("DEBUG: Final Browser decided: " + browserName);
 
         tlBrowserName.set(browserName);
         page = pf.intiBrowser(browserName);
