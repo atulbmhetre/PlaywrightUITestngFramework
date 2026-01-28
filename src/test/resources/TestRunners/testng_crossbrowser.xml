@@ -3,6 +3,7 @@
 <suite name="Open Cart Cross Browser Test PW Suite" parallel="classes" thread-count="2" verbose="4" >
 
     <listeners>
+        <listener class-name="com.qa.opencart.utilities.AnnotationTransformer" />
         <listener class-name="com.qa.opencart.listeners.ExtentReportListeners"></listener>
     </listeners>
 

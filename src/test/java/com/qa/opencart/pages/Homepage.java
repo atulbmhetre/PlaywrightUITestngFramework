@@ -1,6 +1,9 @@
 package com.qa.opencart.pages;
 
 import com.microsoft.playwright.Page;
+import com.qa.opencart.listeners.ExtentReportListeners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Homepage {
 
@@ -10,27 +13,28 @@ public class Homepage {
     private String txt_prodHeader = "//div[@id='content']/h1";
     private String link_myAccount = "//span[text()='My Account']";
     private String link_login = "//a[text()='Login']";
+    private static final Logger log = LoggerFactory.getLogger(Homepage.class);
 
     public Homepage(Page page){
         this.page = page;
     }
 
     public String getHomepageTitle(){
-        System.out.println("Home Page title = " + page.title());
+        log.info("Home Page title = " + page.title());
         return page.title();
     }
 
     public String doSearch(String productName){
         page.fill(field_search,productName);
         page.click(btn_search);
-        System.out.println("Search product Header = "+ page.textContent(txt_prodHeader));
+        log.info("Search product Header = "+ page.textContent(txt_prodHeader));
         return page.textContent(txt_prodHeader);
     }
 
     public LoginPage navigateToLoginPage(){
         page.click(link_myAccount);
         page.click(link_login);
-        System.out.println("Login page opened.");
+        log.info("Login page opened.");
         return new LoginPage(page);
     }
 

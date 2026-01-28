@@ -1,5 +1,9 @@
 package com.qa.opencart.config;
 
+import com.qa.opencart.listeners.ExtentReportListeners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +12,7 @@ import java.util.Properties;
 public class ConfigManager {
 
     private static Properties prop;
+    private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
 
     static {
         loadProperties();
@@ -24,16 +29,16 @@ public class ConfigManager {
         File file = new File(path);
 
         if (!file.exists()) {
-            System.err.println("Environment config file not found: " + path);
+            log.error("Environment config file not found: " + path);
             System.exit(1);
         }
 
         try (FileInputStream fis = new FileInputStream(file)) {
-            System.out.println("Config to Load : " + file.getPath());
+            log.info("Config file to Load : " + file.getPath());
             prop = new Properties();
             prop.load(fis);
         } catch (IOException e) {
-            System.err.println("Failed to load config file.");
+            log.error("Failed to load config file for env : "+ env);
             System.exit(1);
         }
     }

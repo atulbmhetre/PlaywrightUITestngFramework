@@ -1,27 +1,27 @@
 package com.qa.opencart.base;
 
+import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
 import com.qa.opencart.config.ConfigManager;
 import com.qa.opencart.pages.Homepage;
 import com.qa.opencart.playwrightfactory.PlaywrightFactory;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.*;
 
 import java.io.IOException;
-import java.util.Properties;
 
 public class BaseClass {
 
-    PlaywrightFactory pf;
+    static PlaywrightFactory pf;
     Page page;
     protected Homepage homepage;
     public static ThreadLocal<String> tlBrowserName = new ThreadLocal<>();
+    private static final Logger log = LoggerFactory.getLogger(BaseClass.class);
 
     @Parameters({"browser"})
-    @BeforeClass(alwaysRun = true)
-    public void setUp(@Optional String browserFromXML) throws IOException {
+    @BeforeSuite(alwaysRun = true)
+    public void startBrowser(@Optional String browserFromXML) throws IOException {
         pf = new PlaywrightFactory();
         String browserName = null;
         if (browserFromXML != null && !browserFromXML.isBlank()) {
@@ -34,18 +34,28 @@ public class BaseClass {
             browserName = ConfigManager.get("browser");
         }
 
-        System.out.println("DEBUG: Final Browser decided: " + browserName);
-
         tlBrowserName.set(browserName);
-        page = pf.intiBrowser(browserName);
+        pf.initBrowser(browserName);
+    }
+
+    @BeforeClass(alwaysRun = true)
+    public void startSesson(){
+        page = pf.initContext();
+        page.navigate(ConfigManager.get("url"));
+        log.info("Navigated to url : " + ConfigManager.get("url"));
         homepage = new Homepage(page);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
+    public void closeSession(){
+        page.context().close();
+    }
+    @AfterSuite(alwaysRun = true)
     public void tearDown(){
         //page.context().browser().close();
         PlaywrightFactory.getBrowser().close();
         PlaywrightFactory.getPlaywright().close();
+        log.info("Browser is closed successful.");
     }
 
     public static String getBrowserName(){

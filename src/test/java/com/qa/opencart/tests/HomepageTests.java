@@ -12,7 +12,7 @@ public class HomepageTests extends BaseClass {
 
 
     @Test(groups = {"smoke"})
-    public void validatePageTitle(){
+    public void validateHomePageTitle(){
         String actualTitle = homepage.getHomepageTitle();
         Assert.assertEquals(actualTitle, AppConstants.HOME_PAGE_TITLE);
     }
@@ -27,7 +27,7 @@ public class HomepageTests extends BaseClass {
     }
 
     @Test (dataProvider = "provideProductData", groups = {"regression"})
-    public void validateSearchProduct(String productName){
+    public void validateSearchProductFromHomePage(String productName){
         String actualHeader = homepage.doSearch(productName);
         Assert.assertEquals(actualHeader, "Search - "+productName);
     }

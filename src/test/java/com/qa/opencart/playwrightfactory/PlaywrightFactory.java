@@ -2,6 +2,9 @@ package com.qa.opencart.playwrightfactory;
 
 import com.microsoft.playwright.*;
 import com.qa.opencart.config.ConfigManager;
+import com.qa.opencart.listeners.ExtentReportListeners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +21,7 @@ public class PlaywrightFactory {
     private static ThreadLocal<Browser> tlBrowser = new ThreadLocal<>();
     private static ThreadLocal<BrowserContext> tlBrowserContext = new ThreadLocal<>();
     private static ThreadLocal<Page> tlPage = new ThreadLocal<>();
+    private static final Logger log = LoggerFactory.getLogger(ExtentReportListeners.class);
 
     public static Playwright getPlaywright() {
         return tlPlaywright.get();
@@ -36,7 +40,8 @@ public class PlaywrightFactory {
     }
 
 
-    public Page intiBrowser(String browserName){
+    public Browser initBrowser(String browserName) {
+        log.info("Launching browser "+browserName+" is initiated.");
         tlPlaywright.set(Playwright.create());
 
         String name = browserName.toLowerCase().trim();
@@ -56,32 +61,14 @@ public class PlaywrightFactory {
                 throw new IllegalArgumentException("Browser type not supported: " + name);
         }
         tlBrowser.set(tlBrowserType.get().launch(new BrowserType.LaunchOptions().setHeadless(Boolean.parseBoolean(ConfigManager.get("isHeadless")))));
+        log.info(browserName + " is launched successfully.");
+        return tlBrowser.get();
+    }
+    public Page initContext(){
         tlBrowserContext.set(tlBrowser.get().newContext());
         tlPage.set(tlBrowserContext.get().newPage());
-        tlPage.get().navigate(ConfigManager.get("url"));
-
         return getPage();
     }
-
-//    public Properties intiProperties() throws IOException {
-//        String env = System.getProperty("env", "dev");
-//
-//        String fileName = "config/" + env + ".config.properties";
-//
-//        InputStream is = getClass()
-//                .getClassLoader()
-//                .getResourceAsStream(fileName);
-//
-//        if (is == null) {
-//            throw new IllegalStateException("Environment config file not found: " + fileName);
-//        }
-//
-//        Properties prop = new Properties();
-//        prop.load(is);
-//        return prop;
-//
-//
-//    }
 
 
 }
