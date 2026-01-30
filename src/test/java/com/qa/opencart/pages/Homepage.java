@@ -1,6 +1,7 @@
 package com.qa.opencart.pages;
 
 import com.microsoft.playwright.Page;
+import com.qa.opencart.listeners.ExtentLogger;
 import com.qa.opencart.listeners.ExtentReportListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class Homepage {
 
     public String getHomepageTitle(){
         log.info("Home Page title = " + page.title());
+        ExtentLogger.pass("Home Page title retrieved. title = "+ page.title());
         return page.title();
     }
 
@@ -28,13 +30,15 @@ public class Homepage {
         page.fill(field_search,productName);
         page.click(btn_search);
         log.info("Search product Header = "+ page.textContent(txt_prodHeader));
+        ExtentLogger.pass("Search product Header retrieved. Header = "+ page.textContent(txt_prodHeader));
         return page.textContent(txt_prodHeader);
     }
 
     public LoginPage navigateToLoginPage(){
         page.click(link_myAccount);
         page.click(link_login);
-        log.info("Login page opened.");
+        log.info("User navigated to login page.");
+        ExtentLogger.pass("User navigated to login page.");
         return new LoginPage(page);
     }
 

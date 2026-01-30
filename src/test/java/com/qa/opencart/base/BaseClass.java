@@ -16,11 +16,11 @@ public class BaseClass {
     static PlaywrightFactory pf;
     Page page;
     protected Homepage homepage;
-    public static ThreadLocal<String> tlBrowserName = new ThreadLocal<>();
+    public static ThreadLocal<String> tlBrowserName = new InheritableThreadLocal<>();
     private static final Logger log = LoggerFactory.getLogger(BaseClass.class);
 
     @Parameters({"browser"})
-    @BeforeSuite(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void startBrowser(@Optional String browserFromXML) throws IOException {
         pf = new PlaywrightFactory();
         String browserName = null;
@@ -35,12 +35,7 @@ public class BaseClass {
         }
 
         tlBrowserName.set(browserName);
-        pf.initBrowser(browserName);
-    }
-
-    @BeforeClass(alwaysRun = true)
-    public void startSesson(){
-        page = pf.initContext();
+        page = pf.initBrowser(browserName);
         page.navigate(ConfigManager.get("url"));
         log.info("Navigated to url : " + ConfigManager.get("url"));
         homepage = new Homepage(page);
@@ -48,13 +43,7 @@ public class BaseClass {
 
     @AfterClass(alwaysRun = true)
     public void closeSession(){
-        page.context().close();
-    }
-    @AfterSuite(alwaysRun = true)
-    public void tearDown(){
-        //page.context().browser().close();
-        PlaywrightFactory.getBrowser().close();
-        PlaywrightFactory.getPlaywright().close();
+        PlaywrightFactory.cleanup();
         log.info("Browser is closed successful.");
     }
 

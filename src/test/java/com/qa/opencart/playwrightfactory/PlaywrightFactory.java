@@ -21,7 +21,7 @@ public class PlaywrightFactory {
     private static ThreadLocal<Browser> tlBrowser = new ThreadLocal<>();
     private static ThreadLocal<BrowserContext> tlBrowserContext = new ThreadLocal<>();
     private static ThreadLocal<Page> tlPage = new ThreadLocal<>();
-    private static final Logger log = LoggerFactory.getLogger(ExtentReportListeners.class);
+    private static final Logger log = LoggerFactory.getLogger(PlaywrightFactory.class);
 
     public static Playwright getPlaywright() {
         return tlPlaywright.get();
@@ -40,7 +40,7 @@ public class PlaywrightFactory {
     }
 
 
-    public Browser initBrowser(String browserName) {
+    public Page initBrowser(String browserName) {
         log.info("Launching browser "+browserName+" is initiated.");
         tlPlaywright.set(Playwright.create());
 
@@ -62,13 +62,32 @@ public class PlaywrightFactory {
         }
         tlBrowser.set(tlBrowserType.get().launch(new BrowserType.LaunchOptions().setHeadless(Boolean.parseBoolean(ConfigManager.get("isHeadless")))));
         log.info(browserName + " is launched successfully.");
-        return tlBrowser.get();
-    }
-    public Page initContext(){
         tlBrowserContext.set(tlBrowser.get().newContext());
         tlPage.set(tlBrowserContext.get().newPage());
         return getPage();
     }
 
+    public static void cleanup() {
+
+        if (tlPage.get() != null) {
+            tlPage.get().close();
+            tlPage.remove();
+        }
+
+        if (tlBrowserContext.get() != null) {
+            tlBrowserContext.get().close();
+            tlBrowserContext.remove();
+        }
+
+        if (tlBrowser.get() != null) {
+            tlBrowser.get().close();
+            tlBrowser.remove();
+        }
+
+        if (tlPlaywright.get() != null) {
+            tlPlaywright.get().close();
+            tlPlaywright.remove();
+        }
+    }
 
 }
